@@ -1,8 +1,8 @@
-Hardware Debugger for FPGA's
+**Hardware Debugger for FPGA's**
 
-Team Members: Rishab Mehra, Parimarjan Negi
+**Team Members:** Rishab Mehra, Parimarjan Negi
 
-Project Description:
+**Project Description:**
 
 Currently all the available debuggers are software based, where you can create the circuit/modules and see their outputs over different inputs. Our goal is to transfer this process to the hardware itself, and debug it right on the hardware. This skips the step of having to create the circuit in the simulator and helps debug the actual circuit itself rather than a virtually simulated version of it.
 
@@ -12,7 +12,7 @@ While writing code for this class, we found the debugging process rather challen
 
 As mentioned before there are multiple software debuggers available, which we will use as a guideline, but no previous work has been done in making a debugger on the hardware itself.
 
-Plan/Timeline:
+**Plan/Timeline:**
 
 The first major task is to get the UART protocol running and send an input array to the FPGA using a shift register on Magma. From there we will connect the input array to the circuit, making sure that everything in the circuit is hooked up to an enable, which turns on once when the input array changes, and we get back a new output array, which we can read using UART.
 
