@@ -18,4 +18,4 @@ The first major task is to get the UART protocol running and send an input array
 
 To implement the UART protocol we will first implement the printf shown in class and proceed to expand it from there and implement the shift register. For hooking up the circuits, we are considering changing the Magma primitives to have an addition parameter called debug (which can possibly be a global variable, or a parameter to the modules) and then setting the enable accordingly. 
 
-Although, we both will be working together on all the tasks, Rishab will first start with trying to set up, and Negi will work on changing the Magma primitives. From there we will merge our work together and work towards getting the debugger ready.
+Although, we both will be working together on all the tasks, Rishab will first start with trying to set up the UART, and Negi will work on changing the Magma primitives. From there we will merge our work together and work towards getting the debugger ready.
