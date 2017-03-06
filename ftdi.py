@@ -13,8 +13,6 @@ icestick.D3.on()
 
 main = icestick.main()
 
-
-
 valid = 1
 
 init = [array(*int2seq(ord(c), 8)) for c in 'Hello, WOrld  \r\n']
@@ -52,6 +50,8 @@ reset = LUT2(I0&~I1)(done, run)
 count(CE=baud, RESET=reset)
 
 shift = PISO(9, ce=True)
+
+# load data when we are not running...
 load = LUT2(I0&~I1)(valid,run)
 shift(1,data,load)
 wire(baud, shift.CE)

@@ -24,14 +24,9 @@ SIMPLE_CLOCK = False
 # counterModM only after the first bit is sent? Or start it again from 0? Might
 # need to mess with magma's internals for that.
 # clock = CounterModM(103, 8, incr=0)
-if not SIMPLE_CLOCK:
-    clock = CounterModM(103, 8)
-    baud = clock.COUT
 
-# Can we approximate behaviour of CounterModM with a simple counter?
-if SIMPLE_CLOCK:
-    clock = Counter(7, ce=True)
-    baud = clock.COUT
+clock = CounterModM(103, 8, ce=True)
+baud = clock.COUT
 
 # not gate is used so we invert the input of RX - will be true when RX sends
 # its first 0. Then becomes 1 again immediately. Use it to set the enable bit
@@ -50,37 +45,40 @@ wire(notter.O, run.CE)
 
 run(notter.O)
 
-# CounterModM doesn't have any of the following ugh.
-# wire(clock.CE, run.O)
-# clock(CE=run.O)
-# wire(clock.incr, run.CE)
+# clock will start only after run becomes true. So baud rate should be set.
+wire(clock.CE, run.O)
 
-if SIMPLE_CLOCK:
-    wire(clock.CE, run.O)
-
-# FIXME: reset our clock after getting the first 1 so its in sync with the baud
-# rate.
-
-siso = SIPO(8, ce=True)
+shift = SIPO(8, ce=True)
 
 # If both baud and run = True, then read in will be true.
 # FIXME: This should be IO&I1 - but baud never seems to be true at the right
 # time for now...
 read_in = LUT2(I0&I1)
-# print(read_in.interface)
+
+# read_in.O will only be true if both run.O and at correct baud rate
 read_in(baud, run.O)
 
-wire(read_in.O, main.D1)
-wire(read_in.O, siso.CE)
-wire(baud, main.D2)
-siso(main.RX)
+# shift will only be enabled at correct baud rates
+wire(read_in.O, shift.CE)
 
-# turn on light if run is true. Should stay on in this case.
+# FIXME: is this a correct way? Will keep reading in serial bits whenever it is
+# enabled.
+shift(main.RX)
+
+wire(read_in.O, main.D1)
+wire(baud, main.D2)
 wire(run.O, main.D3)
-# Turn on the other LED's with siso.
-# wire(siso.O[1], main.D1)
-# wire(siso.O[2], main.D2)
-wire(siso.O[3], main.D4)
+
+# FIXME: We should actually not this guy and then connect it to the light so the
+# default 1 doesn't turn it on.
+
+# the default value for shift.O[n] is just 0 I guess so it turns on without any
+# input?
+test_not = Not()
+test_not(shift.O[3])
+wire(test_not.O, main.D4)
+
+# Turn on the other LED's with shift.
 
 compile(sys.argv[1], main)
 
