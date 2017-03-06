@@ -35,7 +35,7 @@ not_over(count_bits.COUT)
 
 # FIXME: This will keep run true until forever after the first 0. In reality,
 # we only want it to be 1 until we read n bits or whatever.
-wire(notter.O, run.CE)
+wire(not_over.O, run.CE)
 run(notter.O)
 
 # clock will start only after run becomes true. So baud rate should be set.
@@ -50,11 +50,11 @@ read_in = LUT2(I0&I1)
 
 # read_in.O will only be true if both run.O and at correct baud rate
 
-run_and_not_over = LUT2(I0&I1)
+#run_and_not_over = LUT2(I0&I1)
 # run_and_not_over = And(2)
 
-run_and_not_over(run.O, not_over.O)
-read_in(baud, run_and_not_over.O)
+#run_and_not_over(run.O, not_over.O)
+read_in(baud, run.O)
 
 # shift will only be enabled at correct baud rates
 wire(read_in.O, shift.CE)
@@ -65,7 +65,7 @@ shift(main.RX)
 
 wire(read_in.O, main.D1)
 wire(baud, main.D2)
-wire(run_and_not_over.O, main.D3)
+#wire(run_and_not_over.O, main.D3)
 
 # This should incr counter only when baud rate is on.
 wire(read_in.O, count_bits.CE)
@@ -88,7 +88,7 @@ data = array(shift.O[0], shift.O[1], shift.O[2], shift.O[3], shift.O[4],
 
 clock2 = CounterModM(103, 8)
 
-baud2 = clock.COUT
+baud2 = clock2.COUT
 
 count2 = Counter(4, ce=True, r=True)
 done2 = Decode(15, 4)(count2)
