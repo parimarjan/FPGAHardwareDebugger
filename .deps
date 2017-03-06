@@ -1,46 +1,8 @@
 {
     ".deps_version": 2, 
-    "python baud.py build/baud": {
-        "baud.py": "input-694ef078086c1c21cd50051418387199", 
-        "build/baud.pcf": "output-9bef0c8b2050e10d9f38bff7967df964", 
-        "build/baud.v": "output-0f4af253dcfddac583efecc3435a891b", 
-        "rom.py": "input-69d6d0bce837c0360a9dcaa03e4c8da0", 
-        "rom.pyc": "output-b0958562a2091ca0479482049cc0f872"
-    }, 
-    "python fsm.py build/fsm": {
-        "build/fsm.pcf": "output-686653e37ebc8b77a7e432fc1e05798c", 
-        "build/fsm.v": "output-4e872b1d1e0e74c891fab8db572068a7", 
-        "build/ftdi.v": "input-972853adca29d33dd65d642bba1a8083", 
-        "fsm.py": "input-ebd2d2b31688484129c6f24a3a463acd", 
-        "rom.py": "input-69d6d0bce837c0360a9dcaa03e4c8da0", 
-        "rom.pyc": "output-91c5630dcca2788be8880aa46ea69ea5"
-    }, 
-    "python ftdi.py build/ftdi": {
-        "build/baud.pcf": "input-9bef0c8b2050e10d9f38bff7967df964", 
-        "build/baud.v": "input-0f4af253dcfddac583efecc3435a891b", 
-        "build/fsm.pcf": "input-686653e37ebc8b77a7e432fc1e05798c", 
-        "build/fsm.v": "input-4e872b1d1e0e74c891fab8db572068a7", 
-        "build/ftdi.pcf": "output-9fcfb929e61c7a6e50b57aadd55a4864", 
-        "build/ftdi.v": "output-f78d69a19464220b527d372cc35858f9", 
-        "ftdi.py": "input-23cfb25a5fae1c0070bda573ec6b9ad8", 
-        "rom.py": "input-69d6d0bce837c0360a9dcaa03e4c8da0", 
-        "rom.pyc": "output-3a676104b751cc765dc036a26e07e195"
-    }, 
-    "python receiver.py build/receiver": {
-        "build/receiver.blif": "input-418eb9b44c3ea3c15a4d39f612a3d5aa", 
-        "build/receiver.pcf": "output-85b8f273fdb30e90aa201081efd918b8", 
-        "build/receiver.v": "output-13f0a86a2cc66e04419a004ac83a56af", 
-        "receiver.py": "input-2518d413ffaaeaa8dcf7c741245a6321", 
-        "rom.py": "input-69d6d0bce837c0360a9dcaa03e4c8da0", 
-        "rom.pyc": "output-7599d20e41bc89e8e01e3ec9d826942f"
-    }, 
-    "python test.py build/test": {
-        "build/iCEstick-UART-Demo-master/cores/osdvu/uart.v": "input-9bb24494e71cc40204be409af56700db", 
-        "build/receiver.v": "input-13f0a86a2cc66e04419a004ac83a56af", 
-        "build/test.pcf": "output-a415b7d2cb198c96fd348548f4b1253d", 
-        "build/test.v": "output-b88fb08c922fb2b38a1009b789f0a0aa", 
-        "rom.py": "input-69d6d0bce837c0360a9dcaa03e4c8da0", 
-        "rom.pyc": "output-a67915f76d7f9ef6a3ae1761fb69b27d", 
-        "test.py": "input-3b522da8e09ea12e754d2825bea5e8f3"
+    "python blink.py build/blink": {
+        "blink.py": "input-1a87c39ed60b30409c56b6a65c1294e6", 
+        "build/blink.pcf": "output-7b6f043167c4e5cbdb4bebbc2b7f9702", 
+        "build/blink.v": "output-90ab69c7ebf5f450a369588ee14ffb36"
     }
 }
