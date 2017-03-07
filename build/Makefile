@@ -1,4 +1,5 @@
-NAME = blink
+#NAME = blink
+NAME = add
 PNR=arachne-pnr
 
 DEVICE = 1k

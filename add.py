@@ -11,6 +11,11 @@ for i in range(5):
 
 main = icestick.main()
 
+# FIXME: Have to add these automatically
+icestick.RX.input().on()
+icestick.TX.output().on()
+icestick.Clock.on()
+
 def Add(A, B):
     n = len(A)
     add = [FullAdder() for i in range(n)]
