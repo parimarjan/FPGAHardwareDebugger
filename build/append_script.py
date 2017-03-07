@@ -3,7 +3,7 @@ import sys
 UART_FILE = "./uart_integration.v"
 
 # FIXME: Should be based on the name in the makefile
-PCF_FILE = "add.pcf"
+# PCF_FILE = "add.pcf"
 
 MAKEFILE = "./Makefile"
 
@@ -12,7 +12,7 @@ OUTPUT_ARRAY_NAME = "output_byte"
 EXTRA_MAIN_ARGS = ", input CLKIN, input RX, output TX);"
 
 INPUT_SIZE = 7
-OUTPUT_SIZE = 4
+OUTPUT_SIZE = 7
 
 INPUT_ARRAY = "wire [" + str(INPUT_SIZE) + ":0] " + INPUT_ARRAY_NAME + ";"
 OUTPUT_ARRAY = "wire [" + str(OUTPUT_SIZE) + ":0] " + OUTPUT_ARRAY_NAME + ";"
@@ -23,8 +23,18 @@ LAST_LINE = "\ntop t1(CLKIN, RX, TX, " + INPUT_ARRAY_NAME + ", " + \
             OUTPUT_ARRAY_NAME + ");"
 
 # Read in the Makefile and figure out the name of which file we are changing.
-# tmp solution
-name = "./add.v"
+# FIXME: Assuming only 1 verilog file is being uploaded
+main_verilog_file = ""
+make_file = open(MAKEFILE, "r")
+
+for line in make_file:
+
+    if line[0] != "#" and "NAME" in line:
+        main_verilog_file = line.split()[-1]
+        break
+
+make_file.close()
+name = main_verilog_file + ".v"
 
 # FIXME: Can find this by checking the file first
 MAIN_INPUT = "J1"

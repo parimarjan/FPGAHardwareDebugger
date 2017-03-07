@@ -3,7 +3,7 @@ module top(
 	input RS232_Rx_TTL,
 	output RS232_Tx_TTL,
   input [7:0] input_byte,
-  output [4:0] output_byte
+  output [7:0] output_byte
 	);
 
 	wire reset = 0;
@@ -37,7 +37,7 @@ module top(
 		if (received) begin
       // FIXME: Change these numbers...
 			input_byte <= rx_byte;
-      tx_byte[4:0] <= output_byte[4:0];
+      tx_byte <= output_byte;
 			transmit <= 1;
 		end else begin
 			transmit <= 0;

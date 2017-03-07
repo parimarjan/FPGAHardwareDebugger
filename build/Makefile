@@ -1,5 +1,7 @@
 #NAME = blink
-NAME = add
+#NAME = add
+NAME = echo
+
 PNR=arachne-pnr
 
 DEVICE = 1k
