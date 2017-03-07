@@ -11,13 +11,12 @@ for i in range(8):
 
 main = icestick.main()
 
-# FIXME: Have to add these automatically
+# Must add these 3 for the debugger to work
 icestick.RX.input().on()
 icestick.TX.output().on()
 icestick.Clock.on()
 
-# wire(sum, main.J3[0:4])
-# wire(cout, main.J3[4])
+# Simply wiring all inputs to outputs (Echo-ing)
 wire(main.J1, main.J3)
 
 compile(sys.argv[1], main)

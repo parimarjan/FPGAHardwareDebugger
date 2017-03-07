@@ -11,13 +11,15 @@ for i in range(8):
 
 main = icestick.main()
 
-# FIXME: Have to add these automatically
+# Must add these 3 for the debugger to work
+
 icestick.RX.input().on()
 icestick.TX.output().on()
 icestick.Clock.on()
 
 def Add(A, B):
     n = len(A)
+    # create a full adder for every bit to be added
     add = [FullAdder() for i in range(n)]
 
     CIN = 0
@@ -32,8 +34,11 @@ def Add(A, B):
 
 sum, cout = Add(main.J1[0:4], main.J1[4:8])
 
+#wire the bits to the output
 wire(sum, main.J3[0:4])
 wire(cout, main.J3[4])
+
+#adding 0 to the outputs not used - will automate this
 
 dff = DFF()
 dff(0)
