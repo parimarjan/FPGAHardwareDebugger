@@ -4,22 +4,16 @@ import time
 serial_name = "/dev/tty.usbserial-141B"
 
 
-# input = bin(0x11)
-#input = "00010001"
 
-# input = "01010101"
-#input = "\x55"
-# input = "\x11"
-# input = "\x21"
-input = "\x22"
+input = "\xAA" #first number will be the first 4 bits, second will be the second 4 bits
 
 with serial.Serial(serial_name, 9600, timeout=1) as ser:
     
     ser.write(input)
-    time.sleep(0.5)
+    ser.read(1) #ignore the read bit
+    time.sleep(0.5) #read the circuit after 0.5 seconds
     ser.write(input)
-    print(ser.read(1))
     ret = (ser.read(1).encode("hex"))
-    print(ret)
-    print(bin(int(ret, 16)))
+    print("Hex: " + ret)
+    print("Bin: " + bin(int(ret, 16)))
 
