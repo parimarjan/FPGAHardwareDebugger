@@ -1,7 +1,5 @@
-#NAME = blink
-#NAME = add
+NAME = echo 
 NAME = test
-NAME = echo
 
 PNR=arachne-pnr
 

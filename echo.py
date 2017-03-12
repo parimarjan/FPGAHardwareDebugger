@@ -32,12 +32,12 @@ main = icestick.main()
                # "RS232_Tx_TTL", Out(Bit)
                 # )
 
-UART = DefineCircuit('test',
-                'IO', In(Bit))
+UART_TEST = DeclareCircuit('test',
+                'input_bit', In(Bit))
 
 counter = Counter(5)
 
-uart = UART()
+uart = UART_TEST()
 uart(counter.O)
 
 # Simply wiring all inputs to outputs (Echo-ing)
