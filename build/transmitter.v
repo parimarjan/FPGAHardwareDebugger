@@ -2,7 +2,8 @@ module top(
 	input iCE_CLK,
 	input RS232_Rx_TTL,
 	output RS232_Tx_TTL,
-  input [7:0] input_byte,
+  //input [7:0] input_byte,
+  input start_transmitting,
   output [7:0] output_byte
 	);
 
@@ -34,9 +35,8 @@ module top(
 	);
 
 	always @(posedge iCE_CLK) begin
-		if (received) begin
-      // FIXME: Change these numbers...
-			input_byte <= rx_byte;
+		if (start_transmitting) begin
+			//input_byte <= rx_byte;
       tx_byte <= output_byte;
 			transmit <= 1;
 		end else begin

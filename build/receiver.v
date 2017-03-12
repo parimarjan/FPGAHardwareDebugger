@@ -1,17 +1,21 @@
 module top(
+  // clk name doesn't matter I guess?
 	input iCE_CLK,
+  // RX and TX pins
 	input RS232_Rx_TTL,
 	output RS232_Tx_TTL,
   input [7:0] input_byte,
-  output [7:0] output_byte
 	);
 
+  // never resets it.
 	wire reset = 0;
 	reg transmit;
 	reg [7:0] tx_byte;
 	wire received;
 	wire [7:0] rx_byte;
 	wire is_receiving;
+
+  // never using these
 	wire is_transmitting;
 	wire recv_error;
 
@@ -36,7 +40,7 @@ module top(
 	always @(posedge iCE_CLK) begin
 		if (received) begin
       // FIXME: Change these numbers...
-			input_byte <= rx_byte;
+      input_byte <= rx_byte;
       tx_byte <= output_byte;
 			transmit <= 1;
 		end else begin

@@ -1,5 +1,6 @@
 #NAME = blink
 #NAME = add
+NAME = test
 NAME = echo
 
 PNR=arachne-pnr
