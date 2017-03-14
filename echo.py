@@ -4,6 +4,8 @@ from mantle import *
 from boards.icestick import IceStick
 
 icestick = IceStick()
+icestick.Clock.on()
+
 for i in range(8):
     icestick.J1[i].input().on()
 for i in range(8):
@@ -14,7 +16,6 @@ icestick.D1.on()
 # Must add these 3 for the debugger to work
 icestick.RX.input().on()
 icestick.TX.output().on()
-icestick.Clock.on()
 
 main = icestick.main()
 
@@ -26,21 +27,18 @@ main = icestick.main()
   # input [7:0] input_byte,
 	# );
 
-# uart_integration = DeclareCircuit('top',
-               # "CLKIN", In(Bit),
-               # "RS232_Rx_TTL", In(Bit),
-               # "RS232_Tx_TTL", Out(Bit)
-                # )
+RECEIVER = DeclareCircuit('receiver',
+               "iCE_CLK", In(Bit),
+               "RX", In(Bit),
+               "TX", Out(Bit)
+                )
 
-UART_TEST = DeclareCircuit('test',
-                'input_bit', In(Bit))
+receiver = RECEIVER()
 
-counter = Counter(5)
-
-uart = UART_TEST()
-uart(counter.O)
+receiver(main.CLKIN, main.RX)
+wire(receiver.TX, main.TX)
 
 # Simply wiring all inputs to outputs (Echo-ing)
-wire(main.J1, main.J3)
+# wire(main.J1, main.J3)
 
 compile(sys.argv[1], main)

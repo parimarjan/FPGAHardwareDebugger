@@ -1,10 +1,10 @@
-module top(
+`include "uart_api/uart.v"
+module receiver(
   // clk name doesn't matter I guess?
 	input iCE_CLK,
   // RX and TX pins
-	input RS232_Rx_TTL,
-	output RS232_Tx_TTL,
-  input [7:0] input_byte,
+	input RX,
+	output TX,
 	);
 
   // never resets it.
@@ -26,8 +26,8 @@ module top(
 	uart0(
 		.clk(iCE_CLK),                    // The master clock for this module
 		.rst(reset),                      // Synchronous reset
-		.rx(RS232_Rx_TTL),                // Incoming serial line
-		.tx(RS232_Tx_TTL),                // Outgoing serial line
+		.rx(RX),                // Incoming serial line
+		.tx(TX),                // Outgoing serial line
 		.transmit(transmit),              // Signal to transmit
 		.tx_byte(tx_byte),                // Byte to transmit
 		.received(received),              // Indicated that a byte has been received
@@ -40,8 +40,7 @@ module top(
 	always @(posedge iCE_CLK) begin
 		if (received) begin
       // FIXME: Change these numbers...
-      input_byte <= rx_byte;
-      tx_byte <= output_byte;
+      tx_byte <= rx_byte;
 			transmit <= 1;
 		end else begin
 			transmit <= 0;
