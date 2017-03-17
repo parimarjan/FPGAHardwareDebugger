@@ -9,7 +9,7 @@ ser.close()
 ser.open()
 try:
     while True:
-        ser.write(bin(0))
+        ser.write(bin(1))
 
 except KeyboardInterrupt:
     ser.close()
