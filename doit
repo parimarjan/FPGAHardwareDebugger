@@ -1,9 +1,6 @@
-export MANTLE=lattice
-export MANTLE_TARGET=ice40
 ./bake clean
 ./bake
 cd build
-python append_script.py
 
 sudo kextunload -b com.apple.driver.AppleUSBFTDI
 make upload
