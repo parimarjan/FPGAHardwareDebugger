@@ -1,5 +1,4 @@
-NAME =ftdi
-NAME =receiver
+NAME =freeze
 
 PNR=arachne-pnr
 

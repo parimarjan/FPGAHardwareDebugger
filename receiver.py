@@ -44,6 +44,7 @@ ECHO = DeclareCircuit('echo',
                 )
 
 receiver = RECEIVER()
+receiver(main.CLKIN, main.RX)
 
 echo = ECHO()
 echo(main.CLKIN, main.RX, receiver.rx_byte)
