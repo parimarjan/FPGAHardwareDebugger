@@ -39,14 +39,16 @@ TRANSMITTER = DeclareCircuit('transmitter',
 ECHO = DeclareCircuit('echo',
                "iCE_CLK", In(Bit),
                "RX", In(Bit),
+               "transmit_byte", In(Array(8, Bit)),
                "TX", Out(Bit)
                 )
 
+receiver = RECEIVER()
+
 echo = ECHO()
-echo(main.CLKIN, main.RX)
+echo(main.CLKIN, main.RX, receiver.rx_byte)
 wire(echo.TX, main.TX)
 
-receiver = RECEIVER()
 
 # transmitter = TRANSMITTER()
 # transmitter(main.CLKIN, receiver.rx_byte)
