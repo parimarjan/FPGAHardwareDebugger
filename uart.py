@@ -13,7 +13,8 @@ RECEIVER = DeclareCircuit('receiver',
                "iCE_CLK", In(Bit),
                "RX", In(Bit),
                "REC_BYTE", Out(Array(8, Bit)),
-               "TX", Out(Bit)
+               "TX", Out(Bit),
+               "RECEIVED", Out(Bit)
                 )
 
 TRANSMITTER = DeclareCircuit('transmit',

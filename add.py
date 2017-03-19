@@ -31,16 +31,14 @@ def Add(A, B):
     return array(*O), CIN
 
 
-receiver = RECEIVER()
-receiver(main.CLKIN, main.RX)
 
-sum, cout = Add(receiver.REC_BYTE[0:4], receiver.REC_BYTE[4:8])
-# result = Out(Array(4, Bit))
-# reg = [DFF() for i in range(8)]
-test_array = concat(sum, sum)
+# sum, cout = Add(receiver.REC_BYTE[0:4], receiver.REC_BYTE[4:8])
 
-echo = TRANSMITTER()
-echo(main.CLKIN, main.RX, test_array)
-wire(echo.TX, main.TX)
+# test_array = concat(sum, sum)
+
+
+# echo = TRANSMITTER()
+# echo(main.CLKIN, main.RX, test_array)
+# wire(echo.TX, main.TX)
 
 compile(sys.argv[1], main)

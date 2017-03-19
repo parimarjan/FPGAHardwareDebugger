@@ -1,4 +1,4 @@
-NAME =receiver
+NAME =shift_input
 
 PNR=arachne-pnr
 

@@ -6,6 +6,7 @@ module receiver(
   input RX,
   output [7:0] REC_BYTE,
   output TX,
+  output RECEIVED,
 	);
 
   // never resets it.
@@ -39,6 +40,7 @@ module receiver(
 	);
 
   always @(posedge iCE_CLK) begin
+    RECEIVED <= received;
     if (received) begin
       //tx_byte <= output_byte;
       transmit <= 1;
