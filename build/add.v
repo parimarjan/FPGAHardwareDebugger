@@ -1,5 +1,4 @@
 module main (output  D2, output  D1, input [7:0] J3, input  CLKIN, output  TX, input  RX);
-wire  inst0_TX;
 wire [7:0] inst0_rx_byte;
 wire  inst1_O;
 wire  inst2_CO;
@@ -10,7 +9,7 @@ wire  inst6_CO;
 wire  inst7_O;
 wire  inst8_CO;
 wire  inst9_TX;
-receiver inst0 (.iCE_CLK(CLKIN), .RX(RX), .TX(inst0_TX), .rx_byte(inst0_rx_byte));
+receiver inst0 (.iCE_CLK(CLKIN), .RX(RX), .rx_byte(inst0_rx_byte));
 SB_LUT4 #(.LUT_INIT(16'hC33C)) inst1 (.I0(1'b0), .I1(inst0_rx_byte[0]), .I2(inst0_rx_byte[4]), .I3(1'b0), .O(inst1_O));
 SB_CARRY inst2 (.I0(inst0_rx_byte[0]), .I1(inst0_rx_byte[4]), .CI(1'b0), .CO(inst2_CO));
 SB_LUT4 #(.LUT_INIT(16'hC33C)) inst3 (.I0(1'b0), .I1(inst0_rx_byte[1]), .I2(inst0_rx_byte[5]), .I3(inst2_CO), .O(inst3_O));

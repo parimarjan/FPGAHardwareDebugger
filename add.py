@@ -6,16 +6,12 @@ from uart import *
 
 icestick = IceStick()
 
-for i in range(8):
-    icestick.J3[i].input().on()
-
 icestick.RX.input().on()
 icestick.TX.output().on()
 icestick.Clock.on()
 
 icestick.D1.on()
 icestick.D2.on()
-
 
 main = icestick.main()
 
@@ -38,23 +34,10 @@ def Add(A, B):
 receiver = RECEIVER()
 receiver(main.CLKIN, main.RX)
 
-sum, cout = Add(receiver.rx_byte[0:4], receiver.rx_byte[4:8])
+sum, cout = Add(receiver.REC_BYTE[0:4], receiver.REC_BYTE[4:8])
 # result = Out(Array(4, Bit))
 # reg = [DFF() for i in range(8)]
 test_array = concat(sum, sum)
-
-# O = [0]*8
-# result = array(*O)
-
-# wire(result[4], 1)
-
-# wire(main.D1, result[0])
-# wire(main.D2, result[7])
-
-# arr = array(sum, 4)
-# wire(sum, array2[0:4])
-# wire(sum, result_array[0:4])
-# wire(cout, result_array[4])
 
 echo = ECHO()
 echo(main.CLKIN, main.RX, test_array)
