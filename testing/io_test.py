@@ -3,7 +3,7 @@ import time
 
 serial_name = "/dev/tty.usbserial-141B"
 
-verbose = False
+verbose = True
 input = "\x11" #first number will be the first 4 bits, second will be the second 4 bits
 
 file = open("test_file.txt")
@@ -34,18 +34,27 @@ for line in lines:
 
 	
 	with serial.Serial(serial_name, 9600, timeout=1) as ser:
-		for i in inputs:
+                ser.write("\x00")
+                time.sleep(0.1)
+                output_from_hardware.append(ser.read(1).encode("hex"))
+		for i in inputs: 
 			ser.write("\\x" + i)
+                        time.sleep(0.1)
+                        output_from_hardware.append(ser.read(1).encode("hex"))
 
 		end_of_circuit_array = []
 
-		while(true):
-			for o in outputs:
-				output_from_hardware.append(ser.read(1).encode("hex"))
-				if end_of_circuit_array == output_from_hardware:
-					break
-				else:
-					end_of_circuit_array = output_from_hardware
+                ser.write("\\x" + i)
+                time.sleep(0.1)
+                output_from_hardware.append(ser.read(1).encode("hex"))
+
+		# while(true):
+			# for o in outputs:
+				# output_from_hardware.append(ser.read(1).encode("hex"))
+				# if end_of_circuit_array == output_from_hardware:
+					# break
+				# else:
+					# end_of_circuit_array = output_from_hardware
 
 	if verbose:
 		print("Output from hardware:")

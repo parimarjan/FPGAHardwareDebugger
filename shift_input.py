@@ -39,15 +39,14 @@ piso = PISO(8, ce=True)
 sipo = SIPO(32, ce=True)
 sipo(piso.O)
 
-receiver(main.CLKIN, main.RX)
 
 piso(1, receiver.REC_BYTE, 1)
 wire(piso.CE, counter_enable.O)
 wire(sipo.CE, counter_enable.O)
 
 # wire(main.D1, piso.O)
-wire(main.D1, counter_enable.O)
-# wire(main.D2, fuck_this.O)
+wire(main.D1, sipo.O[0])
+wire(main.D2, sipo.O[1])
 # wire(main.D3, receiver.RECEIVED)
 wire(main.D3, sipo.O[12])
 wire(main.D4, sipo.O[23])
@@ -55,7 +54,8 @@ wire(main.D4, sipo.O[23])
 wire(counter.CE, counter_enable.O)
 
 echo = TRANSMITTER()
-echo(main.CLKIN, main.RX, sipo.O[16:24])
+# echo(main.CLKIN, main.RX, sipo.O[16:24])
+echo(main.CLKIN, main.RX, sipo.O[8:16])
 wire(echo.TX, main.TX)
 
 compile(sys.argv[1], main)

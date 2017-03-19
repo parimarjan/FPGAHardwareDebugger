@@ -1,4 +1,4 @@
-NAME =shift_input
+NAME =shift_input2
 
 PNR=arachne-pnr
 

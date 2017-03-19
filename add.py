@@ -31,14 +31,43 @@ def Add(A, B):
     return array(*O), CIN
 
 
+receiver = RECEIVER()
+receiver(main.CLKIN, main.RX)
 
-# sum, cout = Add(receiver.REC_BYTE[0:4], receiver.REC_BYTE[4:8])
+counter = Counter(3, ce=True)
+
+dff_dummy = DFF(ce=True)
+dff_dummy(1)
+and_dummy = LUT2(I0&~I1)
+and_dummy(dff_dummy.O, counter.COUT)
+wire(dff_dummy.CE, receiver.RECEIVED)
+
+counter_enable = LUT2(I0|I1)
+counter_enable(and_dummy.O, receiver.RECEIVED)
+
+# wire(counter.RESET, counter_disable.O)
+
+piso = PISO(8, ce=True)
+sipo = SIPO(32, ce=True)
+sipo(piso.O)
+
+receiver(main.CLKIN, main.RX)
+
+piso(1, receiver.REC_BYTE, 1)
+wire(piso.CE, counter_enable.O)
+wire(sipo.CE, counter_enable.O)
+
+wire(counter.CE, counter_enable.O)
+
+sum, cout = Add(sipo.O[8:16],sipo.O[0:8])
 
 # test_array = concat(sum, sum)
 
+wire(sipo.O[0], main.D1)
+wire(sipo.O[1], main.D2)
 
-# echo = TRANSMITTER()
-# echo(main.CLKIN, main.RX, test_array)
-# wire(echo.TX, main.TX)
+echo = TRANSMITTER()
+echo(main.CLKIN, main.RX, sum)
+wire(echo.TX, main.TX)
 
 compile(sys.argv[1], main)

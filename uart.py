@@ -12,6 +12,7 @@ from mantle import *
 RECEIVER = DeclareCircuit('receiver',
                "iCE_CLK", In(Bit),
                "RX", In(Bit),
+               "CE2", In(Bit),
                "REC_BYTE", Out(Array(8, Bit)),
                "TX", Out(Bit),
                "RECEIVED", Out(Bit)

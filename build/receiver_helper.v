@@ -4,14 +4,16 @@ module receiver(
 	input iCE_CLK,
   // RX and TX pins
   input RX,
+  input CE2,
   output [7:0] REC_BYTE,
   output TX,
-  output RECEIVED,
+  output RECEIVED
 	);
 
   // never resets it.
 	wire reset = 0;
 
+  reg [7:0] rx_byte;
   reg transmit;
   reg [7:0] tx_byte;
 	wire received;
@@ -33,7 +35,7 @@ module receiver(
 		.transmit(transmit),              // Signal to transmit
 		.tx_byte(tx_byte),                // Byte to transmit
 		.received(received),              // Indicated that a byte has been received
-		.rx_byte(REC_BYTE),                // Byte received
+		.rx_byte(rx_byte),                // Byte received
 		.is_receiving(is_receiving),      // Low when receive line is idle
 		.is_transmitting(is_transmitting),// Low when transmit line is idle
 		.recv_error(recv_error)           // Indicates error in receiving packet.
@@ -46,6 +48,10 @@ module receiver(
       transmit <= 1;
     end else begin
       transmit <= 0;
+    end
+
+    if (CE2) begin
+      REC_BYTE <= rx_byte;
     end
   end
 endmodule
