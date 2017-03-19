@@ -1,4 +1,4 @@
-NAME =add
+NAME =receiver
 
 PNR=arachne-pnr
 
@@ -16,7 +16,7 @@ all: $(NAME).bin
 	$(PNR) $(QUIET) -d $(DEVICE) --post-place-blif $*.place.blif -o $@ -p $(PCF) $<
 
 %.blif: %.v
-	yosys $(QUIET) -p 'synth_ice40 -top main -blif $@' $< receiver_helper.v transmitter_helper.v echo_helper.v
+	yosys $(QUIET) -p 'synth_ice40 -top main -blif $@' $< receiver_helper.v transmitter_helper.v
 
 upload: $(NAME).bin
 	iceprog $<

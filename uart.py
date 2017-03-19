@@ -12,17 +12,11 @@ from mantle import *
 RECEIVER = DeclareCircuit('receiver',
                "iCE_CLK", In(Bit),
                "RX", In(Bit),
-               "REC_BYTE", Out(Array(8, Bit))
-                )
-
-TRANSMITTER = DeclareCircuit('transmitter',
-               "iCE_CLK", In(Bit),
-               "RX", In(Bit),
-               "o_byte", Out(Array(8, Bit)),
+               "REC_BYTE", Out(Array(8, Bit)),
                "TX", Out(Bit)
                 )
 
-ECHO = DeclareCircuit('echo',
+TRANSMITTER = DeclareCircuit('transmit',
                "iCE_CLK", In(Bit),
                "RX", In(Bit),
                "transmit_byte", In(Array(8, Bit)),

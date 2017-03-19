@@ -26,13 +26,12 @@ main = icestick.main()
 
 receiver = RECEIVER()
 receiver(main.CLKIN, main.RX)
+# wire(receiver.TX, main.TX)
 
-echo = ECHO()
+echo = TRANSMITTER()
 echo(main.CLKIN, main.RX, receiver.REC_BYTE)
 wire(echo.TX, main.TX)
 
-receiver(main.CLKIN, main.RX)
-# wire(receiver.TX, main.TX)
 wire(receiver.REC_BYTE[0], main.D1)
 wire(receiver.REC_BYTE[1], main.D2)
 wire(receiver.REC_BYTE[2], main.D3)
