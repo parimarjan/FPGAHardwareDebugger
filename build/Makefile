@@ -1,4 +1,4 @@
-NAME =freeze
+NAME =add
 
 PNR=arachne-pnr
 

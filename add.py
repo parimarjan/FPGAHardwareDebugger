@@ -2,20 +2,22 @@ import sys
 from magma import *
 from mantle import *
 from boards.icestick import IceStick
+from uart import *
 
 icestick = IceStick()
-for i in range(8):
-    icestick.J1[i].input().on()
-for i in range(8):
-    icestick.J3[i].output().on()
 
-main = icestick.main()
-
-# Must add these 3 for the debugger to work
+for i in range(8):
+    icestick.J3[i].input().on()
 
 icestick.RX.input().on()
 icestick.TX.output().on()
 icestick.Clock.on()
+
+icestick.D1.on()
+icestick.D2.on()
+
+
+main = icestick.main()
 
 def Add(A, B):
     n = len(A)
@@ -32,18 +34,30 @@ def Add(A, B):
         O.append(add[i].O)
     return array(*O), CIN
 
-sum, cout = Add(main.J1[0:4], main.J1[4:8])
 
-#wire the bits to the output
-wire(sum, main.J3[0:4])
-wire(cout, main.J3[4])
+receiver = RECEIVER()
+receiver(main.CLKIN, main.RX)
 
-#adding 0 to the outputs not used - will automate this
+sum, cout = Add(receiver.rx_byte[0:4], receiver.rx_byte[4:8])
+# result = Out(Array(4, Bit))
+# reg = [DFF() for i in range(8)]
+test_array = concat(sum, sum)
 
-dff = DFF()
-dff(0)
-wire(dff.O, main.J3[5])
-wire(dff.O, main.J3[6])
-wire(dff.O, main.J3[7])
+# O = [0]*8
+# result = array(*O)
+
+# wire(result[4], 1)
+
+# wire(main.D1, result[0])
+# wire(main.D2, result[7])
+
+# arr = array(sum, 4)
+# wire(sum, array2[0:4])
+# wire(sum, result_array[0:4])
+# wire(cout, result_array[4])
+
+echo = ECHO()
+echo(main.CLKIN, main.RX, test_array)
+wire(echo.TX, main.TX)
 
 compile(sys.argv[1], main)

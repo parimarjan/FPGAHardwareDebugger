@@ -5,7 +5,7 @@ serial_name = "/dev/tty.usbserial-141B"
 
 
 
-input = "\xAA" #first number will be the first 4 bits, second will be the second 4 bits
+input = "\x11" #first number will be the first 4 bits, second will be the second 4 bits
 
 with serial.Serial(serial_name, 9600, timeout=1) as ser:
     
