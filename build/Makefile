@@ -1,4 +1,4 @@
-NAME =add
+NAME =add_mtest
 
 PNR=arachne-pnr
 
