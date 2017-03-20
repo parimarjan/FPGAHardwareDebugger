@@ -11,25 +11,7 @@ icestick.RX.input().on()
 icestick.TX.output().on()
 icestick.Clock.on()
 
-icestick.D1.on()
-icestick.D2.on()
-
 main = icestick.main()
-
-def Add(A, B):
-    n = len(A)
-    # create a full adder for every bit to be added
-    add = [FullAdder() for i in range(n)]
-
-    CIN = 0
-    O = []
-    for i in range(n):
-        wire(A[i], add[i].I0)
-        wire(B[i], add[i].I1)
-        wire(CIN, add[i].CIN)
-        CIN = add[i].COUT
-        O.append(add[i].O)
-    return array(*O), CIN
 
 n = 2
 receivers = []
@@ -45,10 +27,6 @@ for i in range(n):
     
 wire(counter.CE, receivers[0].RECEIVED)
 
-sum, cout = Add(receivers[0].REC_BYTE, receivers[1].REC_BYTE)
-
 echo = TRANSMITTER()
-echo(main.CLKIN, main.RX, sum)
+echo(main.CLKIN, main.RX, receivers[i].REC_BYTE)
 wire(echo.TX, main.TX)
-
-compile(sys.argv[1], main)
