@@ -3,6 +3,7 @@ from magma import *
 from mantle import *
 from boards.icestick import IceStick
 from uart import *
+import math
 
 icestick = IceStick()
 
@@ -30,41 +31,51 @@ def Add(A, B):
         O.append(add[i].O)
     return array(*O), CIN
 
+n = 2
+receivers = []
+# dffs = []
+# enables = []
+# nots = []
 
-receiver = RECEIVER()
-receiver(main.CLKIN, main.RX)
+# freeze_byte = RECEIVER()
+# freeze_dff = DFF(ce=True, r=True)
+# freeze_dff(1)
 
-counter = Counter(3, ce=True)
+# reset_bit = freeze_byte.REC_BYTE[0]
+# reset_bit = Not()
+# reset_bit(freeze_byte.REC_BYTE[0])
 
-dff_dummy = DFF(ce=True)
-dff_dummy(1)
-and_dummy = LUT2(I0&~I1)
-and_dummy(dff_dummy.O, counter.COUT)
-wire(dff_dummy.CE, receiver.RECEIVED)
+counter_n = int(math.ceil(math.log(n, 2)))
+print('counter n was ', counter_n)
+counter = Counter(counter_n+1, ce=True)
+# wire(counter.RESET, reset_bit)
 
-counter_enable = LUT2(I0|I1)
-counter_enable(and_dummy.O, receiver.RECEIVED)
+decoder = Decoder(counter_n+1)
+decoder(counter.O)
 
-# wire(counter.RESET, counter_disable.O)
+for i in range(n):
+    receivers.append(RECEIVER())
+    # dffs.append(DFF(ce=True, r=True))
+    # dffs[i](1)
+    # nots.append(Not())
+    # nots[i](dffs[i].O)
 
-piso = PISO(8, ce=True)
-sipo = SIPO(32, ce=True)
-sipo(piso.O)
+    # receivers[i](main.CLKIN, main.RX, nots[i].O)
+    receivers[i](main.CLKIN, main.RX, decoder.O[i])
+    
+    # wire(dffs[i].RESET, reset_bit)
 
-receiver(main.CLKIN, main.RX)
+# freeze_byte(main.CLKIN, main.RX, dffs[-1].O)
 
-piso(1, receiver.REC_BYTE, 1)
-wire(piso.CE, counter_enable.O)
-wire(sipo.CE, counter_enable.O)
+wire(counter.CE, receivers[0].RECEIVED)
 
-wire(counter.CE, counter_enable.O)
+# for i in range(n): 
+    # wire(dffs[i].CE, decoder.O[i+1])
+    # wire(
 
-sum, cout = Add(sipo.O[8:16],sipo.O[0:8])
+sum, cout = Add(receivers[0].REC_BYTE, receivers[1].REC_BYTE)
 
 # test_array = concat(sum, sum)
-
-wire(sipo.O[0], main.D1)
-wire(sipo.O[1], main.D2)
 
 echo = TRANSMITTER()
 echo(main.CLKIN, main.RX, sum)

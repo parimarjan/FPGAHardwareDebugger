@@ -4,6 +4,7 @@ from mantle import *
 from boards.icestick import IceStick
 
 from uart import *
+import math
 
 icestick = IceStick()
 icestick.Clock.on()
@@ -19,43 +20,37 @@ icestick.TX.output().on()
 
 main = icestick.main()
 
-receiver = RECEIVER()
+n = 2
+receivers = []
+dffs = []
+enables = []
+nots = []
 
-counter = Counter(2, ce=True)
-wire(counter.CE, receiver.RECEIVED)
+for i in range(n):
+    receivers.append(RECEIVER())
+    dffs.append(DFF(ce=True))
+    dffs[i](1)
+    nots.append(Not())
+    nots[i](dffs[i].O)
 
-dff1 = DFF(ce=True)
-dff2 = DFF(ce=True)
-dff1(1)
-dff2(1)
+    receivers[i](main.CLKIN, main.RX, nots[i].O)
 
-enable1 = LUT2(~I0&I1)
-enable2 = LUT2(I0&~I1)
+# receiver = RECEIVER()
+# counter = Counter(2, ce=True)
 
-enable1(counter.O[1], counter.O[0])
-enable2(counter.O[1], counter.O[0])
+counter_n = int(math.ceil(math.log(n, 2)))
+print('counter n was ', counter_n)
+counter = Counter(counter_n+1, ce=True)
+decoder = Decoder(counter_n+1)
+decoder(counter.O)
+wire(counter.CE, receivers[0].RECEIVED)
 
-wire(dff1.CE, enable1.O)
-wire(dff2.CE, enable2.O)
-
-not1 = Not()
-not1(dff1.O)
-
-not2 = Not()
-not2(dff2.O)
-
-receiver(main.CLKIN, main.RX, not1.O)
-
-receiver2 = RECEIVER()
-receiver2(main.CLKIN, main.RX, not2.O)
+for i in range(n): 
+    wire(dffs[i].CE, decoder.O[i+1])
 
 echo = TRANSMITTER()
-echo(main.CLKIN, main.RX, receiver.REC_BYTE)
+echo(main.CLKIN, main.RX, receivers[1].REC_BYTE)
 wire(echo.TX, main.TX)
 
-wire(main.D1, receiver2.REC_BYTE[0])
-wire(main.D2, receiver2.REC_BYTE[3])
-wire(main.D3, receiver2.REC_BYTE[5])
-wire(main.D4, receiver2.REC_BYTE[7])
-
 compile(sys.argv[1], main)
+

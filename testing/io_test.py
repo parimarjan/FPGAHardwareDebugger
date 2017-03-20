@@ -24,28 +24,39 @@ for line in lines:
 	if verbose:
 		print("Inputs:")
 		for i in inputs:
-			print("\\x"+i)
-
+			# print("\\x"+i)
+                        print(i)
+                
+                print('')
 		print("Expected Outputs:")
 		for o in outputs:
-			print("\\x"+o)
+			print(o)
 
 	output_from_hardware = []
 
 	
 	with serial.Serial(serial_name, 9600, timeout=1) as ser:
-                ser.write("\x00")
-                time.sleep(0.1)
-                output_from_hardware.append(ser.read(1).encode("hex"))
-		for i in inputs: 
-			ser.write("\\x" + i)
-                        time.sleep(0.1)
-                        output_from_hardware.append(ser.read(1).encode("hex"))
+                
+                # ser.write("\x02")
+                # ser.read(1)
+                # ser.write("\x03")
+                # ser.read(1)
+
+                for i in inputs: 
+                        ser.write(chr(int(i, 2)))
+                        # ser.write("\\x" + i)
+                        # time.sleep(0.1)
+                        # output_from_hardware.append(ser.read(1).encode("hex"))
+                        ser.read(1).encode("hex")
 
 		end_of_circuit_array = []
-
-                ser.write("\\x" + i)
+                
                 time.sleep(0.1)
+                ser.write("\x00")
+                ser.read(1).encode("hex")
+
+                time.sleep(0.1)
+                ser.write("\x00")
                 output_from_hardware.append(ser.read(1).encode("hex"))
 
 		# while(true):
@@ -60,4 +71,6 @@ for line in lines:
 		print("Output from hardware:")
 		for o in output_from_hardware:
 			print(o)
+                        print(bin(int(o, 16)))
+                print('------------------------------------')
 
