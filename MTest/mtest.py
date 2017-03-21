@@ -13,14 +13,13 @@ import subprocess
 # import pexpect
 # import getpass
 
-'''
-Figure out a way to reset the receiver arrays without unloading/uploading to
-fpga again
-'''
+
+# FIXME: Need to generalize this
+OUTPUT_SLEEP_TIME = 0.5
 
 class MTest():
 
-    def __init__(self, main, n=1, num_outputs=1):
+    def __init__(self, main, num_inputs=1, num_outputs=1, verbose=True):
         '''
         Here we will set up the code for num_inputs and num_outputs.
 
@@ -36,8 +35,12 @@ class MTest():
         '''
 
         self.main = main
+        self.verbose = verbose
 
         self.makefile = './build/Makefile'
+        self.num_inputs = num_inputs
+        self.num_outputs = num_outputs
+
         # Process the test file and deal with enable bits if required.
         # Generate a tmp .py magma file which we will upload after making all
         # the modifications
@@ -62,13 +65,13 @@ class MTest():
         self.output = array(*[0]*8)
 
         receivers = []
-        counter_n = int(math.ceil(math.log(n, 2)))
-        counter = Counter(counter_n+1, ce=True)
+        counter_n = int(math.ceil(math.log(num_inputs, 2))) + 1
+        counter = Counter(counter_n, ce=True)
 
-        decoder = Decoder(counter_n+1)
+        decoder = Decoder(counter_n)
         decoder(counter.O)
 
-        for i in range(n):
+        for i in range(num_inputs):
             receivers.append(RECEIVER())
             receivers[i](main.CLKIN, main.RX, decoder.O[i])
             
@@ -178,7 +181,6 @@ class MTest():
         '''
         
         if type(output) == Out(Bit):
-            print('output is a single bit!')
             # concatenate this with the lowest bit of the output
             output_byte = array(*([output] + [0]*7))
 
@@ -241,7 +243,6 @@ class MTest():
 
         serial_name = "/dev/tty.usbserial-141B"
 
-        verbose = True
         input = "\x11" #first number will be the first 4 bits, second will be the second 4 bits
 
         file = open(file_name)
@@ -260,7 +261,7 @@ class MTest():
                 inputs = input_of_line.split(',')
                 outputs = output_of_line.split(',')
 
-                if verbose:
+                if self.verbose:
                         print("Inputs:")
                         for i in inputs:
                                 # print("\\x"+i)
@@ -272,28 +273,33 @@ class MTest():
                                 print(o)
 
                 output_from_hardware = []
-
-                
+ 
                 with serial.Serial(serial_name, 9600, timeout=1) as ser:
 
                         for i in inputs: 
                                 ser.write(chr(int(i, 2)))
-                                # ser.write("\\x" + i)
-                                # time.sleep(0.1)
-                                # output_from_hardware.append(ser.read(1).encode("hex"))
                                 ser.read(1).encode("hex")
 
                         end_of_circuit_array = []
                         
-                        time.sleep(0.1)
-                        ser.write("\x00")
-                        ser.read(1).encode("hex")
+                        # additional writes in order to push our decoder
+                        # forward - as each of them will activate received etc.
+                        # FIXME: Will this still work once we modify the way
+                        # RECEIVED bit works?
+
+                        # counter_n was used as log_n value for decoder
+                        counter_n = int(math.ceil(math.log(self.num_inputs, 2))) + 1
+                        counter_n = counter_n**2
+                        for i in range(counter_n - self.num_inputs - 1):
+                            time.sleep(0.1)
+                            ser.write("\x00")
+                            ser.read(1).encode("hex")
                         
-                        # 0.5 sleep seems to work better with And4 - need to
+                        # 1 sleep seems to work better with And4 - need to
                         # figure out how to generalize this / or improve this
                         # some other way (freeze everything after n cycles?)
 
-                        time.sleep(1)
+                        time.sleep(OUTPUT_SLEEP_TIME)
                         ser.write("\x00")
                         output = ser.read(1).encode("hex")
 
@@ -305,7 +311,6 @@ class MTest():
 
                         output_from_hardware.append(output)
                             
-
                         # while(true):
                                 # for o in outputs:
                                         # output_from_hardware.append(ser.read(1).encode("hex"))
@@ -314,7 +319,7 @@ class MTest():
                                         # else:
                                                 # end_of_circuit_array = output_from_hardware
 
-                if verbose:
+                if self.verbose:
                         print("Output from hardware:")
                         for o in output_from_hardware:
                                 print(o)
@@ -348,7 +353,6 @@ class MTest():
         # self._update_doit(doit)
 
         args = ['sh', doit]
-        print('command is ', ' '.join(args))
 
         # TODO: Need to take in the password without viewing it and then pass
         # it to subprcess....ugh such a pain, maybe get pexpect to work
@@ -359,38 +363,19 @@ class MTest():
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE)
 
-        print('subprocess.popen done')
         # proc.stdin.write(password + '\n')
         proc.stdin.flush()
 
         stdout, stderr = proc.communicate()
-        print stdout
-        print stderr
+
+        if self.verbose:
+            print stdout
+            print stderr
 
         # Since we have already uploaded the file to the icestick, we can clean
         # up now
         self._cleanup()
 
-        # FIXME: This should technically work too...figure it out.
-        # password = getpass.getpass("Enter password: ")
-
-        # child = pexpect.spawn ('/bin/bash')
-        # child.sendline('sudo ls')
-        # #If you are using pxssh you can use this
-        # #child.prompt()
-        # child.expect("password")
-        # print(child.before)
-
-        # child = pexpect.spawn(command)
-        # i = child.expect([pexpect.TIMEOUT, "password:"])
-        # if i == 0:
-            # print("Got unexpected output: %s %s" % (child.before, child.after))
-            # sys.exit()
-        # else:
-            # child.sendline(password)
-
-        # print(child.read())
-        
     def _cleanup(self):
         '''
         '''

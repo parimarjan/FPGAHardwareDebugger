@@ -1,4 +1,4 @@
-NAME=tmp_andN_mtest
+NAME=tmp_add_mtest
 PNR=arachne-pnr
 
 DEVICE = 1k

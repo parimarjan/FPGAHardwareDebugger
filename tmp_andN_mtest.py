@@ -15,7 +15,7 @@ icestick.Clock.on()
 
 main = icestick.main()
 
-test = MTest(main, n=2, num_outputs=1)
+test = MTest(main, num_inputs=2, num_outputs=1)
 
 and8 = AndN(8)
 output = and8(test.receivers[0], test.receivers[1])

@@ -32,7 +32,7 @@ def Add(A, B):
         O.append(add[i].O)
     return array(*O), CIN
 
-test = MTest(main, n=2, num_outputs=1)
+test = MTest(main, num_inputs=2, num_outputs=1)
 
 sum, cout = Add(test.receivers[0], test.receivers[1])
 test.set_output_byte(sum)
