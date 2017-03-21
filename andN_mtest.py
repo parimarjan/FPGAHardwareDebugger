@@ -25,6 +25,7 @@ test.set_output_byte(output)
 # wire(main.D1, 1)
 
 test.end_circuit()
+test.test_input_file('./testing/test_and8.txt')
 
 # Testing phase!
 

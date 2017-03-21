@@ -40,6 +40,8 @@ test.set_output_byte(sum)
 wire(main.D5, 1)
 test.end_circuit()
 
+test.test_input_file('testing/test_add.txt')
+
 # Testing phase:
 
 # No need for compile call here - since this file itself won't be compiled.

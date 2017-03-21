@@ -217,7 +217,7 @@ class MTest():
         '''
         pass
 
-    def send_inputs(self, inputs):
+    def test_inputs(self, inputs):
         '''
         Each element of the inputs array will be the bit pattern to send to the
         corresponding receiver.
@@ -229,6 +229,99 @@ class MTest():
         '''
         assert len(self.receivers) == len(inputs), 'should specify input \
                 of each receiver'
+
+    def test_input_file(self, file_name):
+        '''
+        @ret: Num pass / fail
+        '''
+        # Add some asserts
+        import serial
+        import time
+        import sys
+
+        serial_name = "/dev/tty.usbserial-141B"
+
+        verbose = True
+        input = "\x11" #first number will be the first 4 bits, second will be the second 4 bits
+
+        file = open(file_name)
+
+        lines = file.readlines()
+
+        for line in lines:
+                
+                split_line = line.split('|')
+                
+                assert len(split_line) == 2, "Inputs and outputs must be separated by |" 
+
+                input_of_line = split_line[0]
+                output_of_line = split_line[1]
+
+                inputs = input_of_line.split(',')
+                outputs = output_of_line.split(',')
+
+                if verbose:
+                        print("Inputs:")
+                        for i in inputs:
+                                # print("\\x"+i)
+                                print(i)
+                        
+                        print('')
+                        print("Expected Outputs:")
+                        for o in outputs:
+                                print(o)
+
+                output_from_hardware = []
+
+                
+                with serial.Serial(serial_name, 9600, timeout=1) as ser:
+
+                        for i in inputs: 
+                                ser.write(chr(int(i, 2)))
+                                # ser.write("\\x" + i)
+                                # time.sleep(0.1)
+                                # output_from_hardware.append(ser.read(1).encode("hex"))
+                                ser.read(1).encode("hex")
+
+                        end_of_circuit_array = []
+                        
+                        time.sleep(0.1)
+                        ser.write("\x00")
+                        ser.read(1).encode("hex")
+                        
+                        # 0.5 sleep seems to work better with And4 - need to
+                        # figure out how to generalize this / or improve this
+                        # some other way (freeze everything after n cycles?)
+
+                        time.sleep(1)
+                        ser.write("\x00")
+                        output = ser.read(1).encode("hex")
+
+                        # while output == '':
+                            # print('still in while loop...')
+                            # time.sleep(0.1)
+                            # ser.write("\x00")
+                            # output = ser.read(1).encode("hex")
+
+                        output_from_hardware.append(output)
+                            
+
+                        # while(true):
+                                # for o in outputs:
+                                        # output_from_hardware.append(ser.read(1).encode("hex"))
+                                        # if end_of_circuit_array == output_from_hardware:
+                                                # break
+                                        # else:
+                                                # end_of_circuit_array = output_from_hardware
+
+                if verbose:
+                        print("Output from hardware:")
+                        for o in output_from_hardware:
+                                print(o)
+                                print(bin(int(o, 16)))
+                        print('------------------------------------')
+
+
         
     def end_circuit(self):
         '''
