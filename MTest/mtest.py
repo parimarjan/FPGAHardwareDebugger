@@ -23,7 +23,6 @@ class MTest():
         self.main = main
         self.test_file = test_file
         # Process the test file and deal with enable bits if required.
-
         
         # Code for generating the receivers and senders on the fpga
         self.receivers = []
@@ -54,9 +53,26 @@ class MTest():
         # the modifications
 
     def set_output_byte(self, output):
+        '''
+        FIXME: Support multiple outputs
+        '''
+        
+        if type(output) == Out(Bit):
+            # concatenate this with the lowest bit of the output
+            output_byte = array(*([output] + [0]*7))
+
+        elif len(output) != 8:
+            # TODO: Test this
+            extra_bits = 8 - len(output)
+            output = concat(array(*[0]*extra_bits), output)
+
+        else:
+            output_byte = output
+        
+        assert len(output_byte) == 8, 'output byte must have length 8'
 
         echo = TRANSMITTER()
-        echo(self.main.CLKIN, self.main.RX, output)
+        echo(self.main.CLKIN, self.main.RX, output_byte)
         wire(echo.TX, self.main.TX)
  
     def add_test_lines(self, test_line):

@@ -14,7 +14,7 @@ RECEIVER = DeclareCircuit('receiver',
                "RX", In(Bit),
                "CE2", In(Bit),
                "REC_BYTE", Out(Array(8, Bit)),
-               "TX", Out(Bit),
+               # "TX", Out(Bit),
                "RECEIVED", Out(Bit)
                 )
 

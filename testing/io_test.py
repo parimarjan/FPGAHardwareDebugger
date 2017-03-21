@@ -1,12 +1,21 @@
 import serial
 import time
+import sys
 
 serial_name = "/dev/tty.usbserial-141B"
 
 verbose = True
 input = "\x11" #first number will be the first 4 bits, second will be the second 4 bits
 
-file = open("test_file.txt")
+print(len(sys.argv))
+try:
+    file_name = sys.argv[1]
+except:
+    print('provide test file name as arg')
+    exit(0)
+
+file = open(file_name)
+
 lines = file.readlines()
 
 for line in lines:

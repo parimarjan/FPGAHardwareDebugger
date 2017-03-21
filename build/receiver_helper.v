@@ -6,10 +6,10 @@ module receiver(
   input RX,
   input CE2,
   output [7:0] REC_BYTE,
-  output TX,
   output RECEIVED
 	);
-
+  
+  wire TX;
   // never resets it.
 	wire reset = 0;
 

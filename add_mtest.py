@@ -2,10 +2,10 @@ import sys
 from magma import *
 from mantle import *
 from boards.icestick import IceStick
-from uart import *
 import math
 
-from mtest import *
+from MTest.mtest import *
+# from Mtest.uart import *
 
 icestick = IceStick()
 
