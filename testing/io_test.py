@@ -64,9 +64,20 @@ for line in lines:
                 ser.write("\x00")
                 ser.read(1).encode("hex")
 
-                time.sleep(0.1)
+                time.sleep(0.5)
                 ser.write("\x00")
-                output_from_hardware.append(ser.read(1).encode("hex"))
+                output = ser.read(1).encode("hex")
+                print(type(output))
+                print(len(output))
+
+                while output == '':
+                    print('still in while loop...')
+                    time.sleep(0.1)
+                    ser.write("\x00")
+                    output = ser.read(1).encode("hex")
+
+                output_from_hardware.append(output)
+                    
 
 		# while(true):
 			# for o in outputs:

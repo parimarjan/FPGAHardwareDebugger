@@ -24,7 +24,4 @@ test.set_output_byte(output)
 
 # wire(main.D1, 1)
 
-test.end_circuit()
-
-# Testing phase!
-
+compile(sys.argv[1], main)

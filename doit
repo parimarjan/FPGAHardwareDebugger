@@ -1,5 +1,11 @@
+
+export PYTHONPATH=$PYTHONPATH:~/CS/cs448h/CS448H/magma
+export MANTLE=lattice
+export MANTLE_TARGET=ice40
+
 ./bake clean
 ./bake
+
 cd build
 
 sudo kextunload -b com.apple.driver.AppleUSBFTDI

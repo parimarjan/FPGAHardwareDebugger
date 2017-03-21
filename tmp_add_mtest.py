@@ -38,9 +38,4 @@ sum, cout = Add(test.receivers[0], test.receivers[1])
 test.set_output_byte(sum)
 
 wire(main.D5, 1)
-test.end_circuit()
-
-# Testing phase:
-
-# No need for compile call here - since this file itself won't be compiled.
-# compile(sys.argv[1], main)
+compile(sys.argv[1], main)

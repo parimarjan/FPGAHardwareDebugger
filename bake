@@ -2,9 +2,16 @@
 import os, glob
 from os.path import join, exists
 from fabricate import main, autoclean, run
+import sys
+
+# Assuming just 1 file being baked.
+# file_name = str(sys.argv[1])
 
 BUILD = 'build'
-tests = glob.glob('*.py')
+tests = glob.glob('tmp*.py')
+# print('file name is ', file_name)
+# tests = [file_name]
+# tests = ['add_mtest.py']
 
 def build():
     for test in tests:
