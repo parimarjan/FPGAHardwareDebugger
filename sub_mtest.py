@@ -42,9 +42,6 @@ test.set_output_byte(sum)
 
 test.end_circuit()
 
+# Testing phase:
 test.test_input_file('testing/test_sub.txt')
 
-# Testing phase:
-
-# No need for compile call here - since this file itself won't be compiled.
-# compile(sys.argv[1], main)
