@@ -54,6 +54,7 @@ class MTest():
         # to set.
         self.extra_cycles = 2
         self.timeout = 1
+        self.serial_name = "/dev/tty.usbserial-141B"
 
         # Process the test file and deal with enable bits if required.
         # Generate a tmp .py magma file which we will upload after making all
@@ -231,7 +232,7 @@ class MTest():
         '''
         pass
 
-    def test_inputs(self, inputs):
+    def test_inputs(self, inputs, outputs):
         '''
         Each element of the inputs array will be the bit pattern to send to the
         corresponding receiver.
@@ -244,14 +245,93 @@ class MTest():
         assert len(self.receivers) == len(inputs), 'should specify input \
                 of each receiver'
 
+        assert 1 == len(outputs), 'only 1 output supported so far'
+
+        if self.verbose:
+            print("Inputs:")
+            for i in inputs:
+                print(i)
+            
+            print('*************************')
+            print("Expected Outputs:")
+            for o in outputs:
+                print(o)
+
+        output_from_hardware = []
+
+        with serial.Serial(self.serial_name, 9600, timeout=self.timeout) as ser:
+
+            for i in inputs: 
+                ser.write(chr(int(i, 2)))
+                ser.read(1)
+
+            end_of_circuit_array = []
+            
+            # Hacky ugly way:
+            # additional writes in order to push our decoder - so by the
+            # end of these write/reads - decoder is back to 0 - for the
+            # next cycle of input test cases.
+            # forward - as each of them will activate received etc.
+
+            # counter_n was used as log_n value for decoder
+            counter_n = int(math.ceil(math.log(self.num_inputs, \
+                2)))+self.extra_cycles
+            counter_n = 2**counter_n
+
+            # number of tries before decoder will reset for next
+            # input-output cycle
+            output_tries = counter_n - self.num_inputs
+
+            i = 0 
+
+            # FIXME: generalize this to having the same result n times?
+            prev_result = ''
+
+            while i < output_tries:
+                
+                ser.write("\x00")
+                bytes_to_read = ser.inWaiting()
+                while bytes_to_read == 0:
+                    bytes_to_read = ser.inWaiting()
+                    print('in while loop, bytes to read is ', bytes_to_read)
+                    ser.write("\x00")
+                    time.sleep(0.1)
+                    i += 1
+
+                print('after loop, bytes to read is ', bytes_to_read)
+
+                # dummy write - which promts the module to send back bits.
+                result = ser.read(bytes_to_read)
+                i += 1
+                if result != '' and result == prev_result:
+                    break 
+
+                prev_result = result
+
+            output = result.encode('hex')
+            
+            # if output_tries are left over - here we don't have to waste
+            # time by sleeping.
+            for j in range(i, output_tries, 1):
+                ser.write("\x00")
+                ser.read(1)
+            
+            output_from_hardware.append(output)
+                
+        if self.verbose:
+                print("Output from hardware:")
+                for o in output_from_hardware:
+                        print(o)
+                        print(bin(int(o, 16)))
+                print('------------------------------------')
+
     def test_input_file(self, file_name):
         '''
         @ret: Num pass / fail
         '''
         # Add some asserts
-        serial_name = "/dev/tty.usbserial-141B"
 
-        input = "\x11" #first number will be the first 4 bits, second will be the second 4 bits
+        # input = "\x11" #first number will be the first 4 bits, second will be the second 4 bits
 
         file = open(file_name)
 
@@ -268,95 +348,8 @@ class MTest():
 
             inputs = input_of_line.split(',')
             outputs = output_of_line.split(',')
-
-            if self.verbose:
-                print("Inputs:")
-                for i in inputs:
-                    print(i)
-                
-                print('*************************')
-                print("Expected Outputs:")
-                for o in outputs:
-                    print(o)
-
-            output_from_hardware = []
-
-            with serial.Serial(serial_name, 9600, timeout=self.timeout) as ser:
-
-                for i in inputs: 
-                    ser.write(chr(int(i, 2)))
-                    ser.read(1)
-
-                end_of_circuit_array = []
-                
-                # Hacky ugly way:
-                # additional writes in order to push our decoder - so by the
-                # end of these write/reads - decoder is back to 0 - for the
-                # next cycle of input test cases.
-                # forward - as each of them will activate received etc.
-
-                # counter_n was used as log_n value for decoder
-                counter_n = int(math.ceil(math.log(self.num_inputs, \
-                    2)))+self.extra_cycles
-                counter_n = 2**counter_n
-
-                # number of tries before decoder will reset for next
-                # input-output cycle
-                output_tries = counter_n - self.num_inputs
-
-                i = 0 
-
-                # FIXME: generalize this to having the same result n times?
-                prev_result = ''
-
-                while i < output_tries:
-                    
-                    ser.write("\x00")
-                    bytes_to_read = ser.inWaiting()
-                    while bytes_to_read == 0:
-                        bytes_to_read = ser.inWaiting()
-                        print('in while loop, bytes to read is ', bytes_to_read)
-                        ser.write("\x00")
-                        time.sleep(0.1)
-                        i += 1
-
-                    print('after loop, bytes to read is ', bytes_to_read)
-
-                    # dummy write - which promts the module to send back bits.
-                    result = ser.read(bytes_to_read)
-                    i += 1
-                    if result != '' and result == prev_result:
-                        break 
-                    prev_result = result
-
-                output = result.encode('hex')
-                
-                # if output_tries are left over - here we don't have to waste
-                # time by sleeping.
-                for j in range(i, output_tries, 1):
-                    ser.write("\x00")
-                    ser.read(1)
-                
-                # original read stuff.
-                # ser.write("\x00")
-                # output = ser.read(1).encode("hex")
-
-                output_from_hardware.append(output)
-                    
-                # while(true):
-                    # for o in outputs:
-                        # output_from_hardware.append(ser.read(1).encode("hex"))
-                        # if end_of_circuit_array == output_from_hardware:
-                                # break
-                        # else:
-                                # end_of_circuit_array = output_from_hardware
-
-            if self.verbose:
-                    print("Output from hardware:")
-                    for o in output_from_hardware:
-                            print(o)
-                            print(bin(int(o, 16)))
-                    print('------------------------------------')
+            
+            self.test_inputs(inputs, outputs)
 
 
         
